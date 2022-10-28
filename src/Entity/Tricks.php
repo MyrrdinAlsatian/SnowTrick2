@@ -37,6 +37,9 @@ class Tricks
     #[ORM\ManyToMany(targetEntity: Video::class, mappedBy: 'trick')]
     private Collection $videos;
 
+    #[ORM\ManyToOne(inversedBy: 'tricks')]
+    private ?Category $category = null;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -158,6 +161,18 @@ class Tricks
         if ($this->videos->removeElement($video)) {
             $video->removeTrick($this);
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
