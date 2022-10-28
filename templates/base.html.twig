@@ -1,19 +1,183 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+	<head>
+		<meta
+			charset="UTF-8">
+		<title>
+			{% block title %}
+			{% endblock %}
+			| SnowTricks!
+		</title>
+		{# https://bootswatch.com/5/morph/bootstrap.min.css #}
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
-</html>
+		{# https://bootswatch.com/5/quartz/bootstrap.min.css #}
+
+		<link
+			href="https://bootswatch.com/5/morph/bootstrap.min.css"
+			rel="stylesheet"
+			type="text/css">
+		<link
+		rel="icon"
+			href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+		{# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('app') }}
+		{% endblock %}
+
+		{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
+		{% endblock %}
+	</head>
+	<body>
+		<nav
+			class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div
+				class="container-fluid">
+				<a
+					class="navbar-brand"
+					{# href="{{path('app_home')}}" #}
+                    >
+					SnowTricks
+				</a>
+				<button
+					class="navbar-toggler"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#navbarColor02"
+					aria-controls="navbarColor02"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span
+						class="navbar-toggler-icon"></span>
+				</button>
+				<div
+					class="collapse navbar-collapse"
+					id="navbarColor02">
+					<ul
+						class="navbar-nav ms-auto">
+						<li
+							class="nav-item">
+							{# Todo : highlight si active #}
+							<a
+								class="nav-link active"
+								href="{{path("app_home")}}">
+								Home
+								<span
+									class="visually-hidden">
+									(current)
+								</span>
+							</a>
+						</li>
+						<li
+							class="nav-item">
+							<a
+								class="nav-link"
+								href="{{path("app_home")}}#tricks">
+								Figures
+							</a>
+						</li>
+						{% if is_granted('ROLE_USER') %}
+							<li
+								class="nav-item">
+								<a
+									class="nav-link"
+									{# href="{{path("app_logout")}}" #}
+                                    >
+									LogOut
+								</a>
+							</li>
+
+						{% else %}
+							<li
+								class="nav-item">
+								<a
+									class="nav-link"
+									{# href="{{path("app_register")}}" #}
+                                    >
+									Sign in
+								</a>
+							</li>
+
+							<li
+								class="nav-item">
+								<a
+									class="nav-link"
+									{# href="{{path("app_login")}}" #}
+                                    >
+									Sing Up
+								</a>
+							</li>
+
+						{% endif %}
+
+
+					</ul>
+
+				</div>
+			</div>
+		</nav>
+		{% if image is defined %}
+			<div
+				class="vh-100 w-100"
+				style="{{ blur|default(false) ? 'filter: blur(5px);':''}}background-size:cover;background-image:url({{image ? asset(image,'uploaded')|default('  ') : ''}}
+														{# {{image|default('https://images.unsplash.com/photo-1504480899134-8d1752cc1162?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2169&q=80')}} #}
+                                                        )"></div>
+		{% else %}
+			<div
+				class="vh-100 w-100"></div>
+
+		{% endif %}
+
+		<main
+			style="margin-top:-80vh; margin-bottom:20vh">
+			{% block body %}{% endblock %}
+			</main>
+
+			<footer
+				class="bg-light p-2 position-fixed bottom-0 start-0 end-0 d-none d-lg-block">
+
+				<p>
+					Copyright
+					<i
+						class="fas fa-copyright"></i>
+				</p>
+			</footer>
+            <div
+                class="toast show position-fixed bottom-0 end-0"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true">
+                <div
+                    class="toast-header">
+                    <strong
+                        class="me-auto">
+                        Bootstrap
+                    </strong>
+                    <small>
+                        11 mins ago
+                    </small>
+                    <button
+                        type="button"
+                        class="btn-close ms-2 mb-1"
+                        data-bs-dismiss="toast"
+                        aria-label="Close">
+                        <span
+                            aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div
+                    class="toast-body">
+                    Hello, world! This is a toast message.
+                </div>
+            </div>
+			<script
+				src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+				integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+				crossorigin="anonymous"></script>
+
+			<script
+				src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+			<script
+				src="https://bootswatch.com/_vendor/jquery/dist/jquery.min.js"></script>
+		</body>
+	</html>
