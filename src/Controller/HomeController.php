@@ -12,7 +12,9 @@ class HomeController extends AbstractController
     public function index(): Response
     {
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+            'titre' => 'SnowTricks',
+            'slogan' => 'Grab ta place dans la communauté',
+            'tricks' => []
         ]);
     }
 }
