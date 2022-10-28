@@ -34,11 +34,32 @@
 				{{slogan}}
 			</span>
 		</h1>
+            {% if tricks is empty %}
+                <div
+                    class="alert alert-dismissible alert-warning">
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"></button>
+                    <h4
+                        class="alert-heading">
+                        Attention !
+                    </h4>
+                    <p
+                        class="mb-0">
+Pas de figure renseigné,
+                        <a
+                            href="#"
+                            class="alert-link">
+                            voulez vous ajouter une figure ?
+                        </a>
+                    </p>
+                </div>
+{% else %}
+
 		<ul
 			class="list-unstyled row "
 			id="tricks">
-
-
             {% for figure in tricks %}
 
 				<li
@@ -90,6 +111,7 @@
 							">
 			voir plus
 		</a> #}
+            {% endif %}
 	</div>
 {% endblock %}
 
