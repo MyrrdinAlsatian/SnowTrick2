@@ -45,11 +45,9 @@ classDiagram
     Users "1" --> "*" Tricks
     Users "1..*" --> "1" Comment
     Comment "1" --> "1" Tricks
-    Tricks "1" --> "1" Image
-    Tricks "0..1" --> "1" Mediapackage
+    Tricks "0..*" --> "1..*" Image
+    Tricks "0..*" --> "1..*" Video
     Tricks "1" --> "1..*" Categories
-    Image "0..n" --> "0..*" Mediapackage
-    Video "1..n" --> "0..*" Mediapackage
 
     class Tricks{
       int id
@@ -103,12 +101,6 @@ classDiagram
         bool is_Valid
         __construc()
     }
-
-         class Mediapackage {
-            int id
-            int video
-            int image
-         }
 
 ```
 
