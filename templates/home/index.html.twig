@@ -28,10 +28,10 @@
 		class="container-xxl">
 		<h1
 			class="homePageTitle fw-bold">
-			SnowTricks,
+			{{titre}},
 			<span
 				class="d-block fs-6 fst-italic fs-light">
-				Grab ta place dans la communauté
+				{{slogan}}
 			</span>
 		</h1>
 		<ul
@@ -39,25 +39,19 @@
 			id="tricks">
 
 
-			{# {% for figure in figures %}
+            {% for figure in tricks %}
+
 				<li
 					class=" col-lg-3 col-md-4 col-sm-6 col-12">
 
 					<div
 						class="card mb-3">
 						<img
-							src="
-															{{ asset(figure.getImageId(),'uploaded') }}
-															"
-							alt="
-															{{figure.name}}
-															"
+							src="{{ asset(figure.getImageId(),'uploaded') }}"
+							alt="{{figure.name}}"
 							class="img-responsive"
-
 							alt="{{figure.name}}"/>
 						<div
-
-
 							class="card-body d-flex py-1 justify-content-between">
 							<h3
 								class="card-title">
@@ -68,10 +62,7 @@
 							</h3>
 							{% if is_granted('ROLE_ADMIN') %}
 								<p>
-
-
-									<a
-										href="{{ path('app_tricks_edit', {'id':figure.id}) }}" class="card-link">
+                                <a href="{{ path('app_tricks_edit', {'id':figure.id}) }}" class="card-link">
 										Modifier
 									</a>
 								</p>
@@ -87,14 +78,11 @@
 										Supprimer
 									</button>
 								</form>
-
 							{% endif %}
 						</div>
 					</div>
-
 				</li>
-			{% endfor %} #}
-
+			{% endfor %}
 		</ul>
 		{# <a
 			href="
