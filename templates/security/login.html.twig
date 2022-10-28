@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Connectez vous !
+{% endblock %}
+
+{% block body %}
+	<div
+		class=" p-3 h-100 row d-flex justify-content-center align-items-center">
+		<form
+			class="p-4 col-12 col-md-8 col-lg-6 col-xl-5 rounded-3"
+			method="post">
+
+			{% if error %}
+				<div
+					class="alert alert-danger">
+					{{ error.messageKey|trans(error.messageData, 'security') }}
+				</div>
+			{% endif %}
+
+			{% if app.user %}
+				<div
+					class="mb-3">
+					Vous êtes déjas loggé en temps que
+					{{ app.user.userIdentifier }}
+					,
+					<a
+						href="{{ path('app_logout') }}">
+						Logout
+					</a>
+				</div>
+			{% endif %}
+			<h1
+				class="h3 mb-3 font-weight-normal">
+				Connectez vous !
+			</h1>
+			<label
+				for="inputUsername">
+				Nom d'utilisateur
+			</label>
+			<input
+				type="text"
+				value="{{ last_username }}" name="username"
+				id="inputUsername"
+				class="form-control mb-1"
+				autocomplete="username"
+				required
+				autofocus>
+			<label
+				for="inputPassword">
+				Mot de passe
+			</label>
+			<input
+				type="password"
+				name="password"
+				id="inputPassword"
+				class="form-control mb-3"
+				autocomplete="current-password"
+				required>
+			<input
+			type="hidden"
+				name="_csrf_token"
+				value="{{ csrf_token('authenticate') }}">
+			{#
+						        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+						        See https://symfony.com/doc/current/security/remember_me.html
+						
+						        <div class="checkbox mb-3">
+						            <label>
+						                <input type="checkbox" name="_remember_me"> Remember me
+						            </label>
+						        </div>
+						    #}
+
+			<p
+				class="row">
+				<small>
+					<a
+						href={{ path('app_forgot_password_request') }}>
+						Mot de passe oublié ?
+					</a>
+				</small>
+				<small>
+					<a
+						href={{ path('app_register') }}>
+						S'inscrire ?
+					</a>
+				</small>
+			</p>
+			<button
+				class="btn btn-lg btn-primary py-1"
+				type="submit">
+				Login
+			</button>
+		</form>
+	</div>
+{% endblock %}
+
