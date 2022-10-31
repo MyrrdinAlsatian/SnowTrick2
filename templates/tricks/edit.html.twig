@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Editer
+	{{trick.name}}
+{% endblock %}
+
+{% block body %}
+<h1>
+	Modifier
+	{{trick.name}}
+</h1>
+<style>
+	.example-wrapper {
+		margin: 1em auto;
+		max-width: 800px;
+		width: 95%;
+		font: 18px / 1.5 sans-serif;
+	}
+	.example-wrapper code {
+		background: #F5F5F5;
+		padding: 2px 6px;
+	}
+</style>
+
+<div
+	class="example-wrapper">
+		{{ include('tricks/_form.html.twig', {'button_label': 'Update'}) }}
+    <a href="{{ path('app_tricks_index') }}">retour à la liste</a>
+    {{ include('tricks/_delete_form.html.twig') }}
+	{% if is_granted('ROLE_USER') %}
+	{% else %}
+<div
+	class="alert alert-warning">
+	
+	<h4
+		class="alert-heading">
+		Attention !
+	</h4>
+	<p
+		class="mb-0">
+	Veuillez vous
+	<a
+		href="{{path('app_login')}}">
+		connecter
+	</a>
+
+		.
+	</p>
+</div>
+		
+	{% endif %}
+
+
+{% endblock %}
