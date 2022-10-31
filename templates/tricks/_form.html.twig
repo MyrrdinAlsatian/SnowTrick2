@@ -3,6 +3,12 @@
 {{ form_row(form.description) }}
 {{ form_row(form.category) }}
 {{ form_widget(form.images) }}
+{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
+{{ encore_entry_script_tags('handleVideo') }}
+		{% endblock %}
+
+
 <div
 	class="form-group row">
 	<br/>
@@ -15,8 +21,10 @@
 			class="btn btn-info add_video_link"
 			id="addVideoUpload"
 			title="Ajouter une vidéo">
-			<i
-				class="fas fa-video"></i>
+            <i
+                class="fas fa-link"></i>
+            <i
+                class="fas fa-plus"></i>
 		</span>
 	</label>
 	<div
