@@ -75,6 +75,9 @@ class TricksController extends AbstractController
     {
         return $this->render('tricks/show.html.twig', [
             'trick' => $trick,
+            'images' => $trick->getImages(),
+            'comments' => $trick->getComments(),
+            'videos' => $trick->getVideos(),
         ]);
     }
 
