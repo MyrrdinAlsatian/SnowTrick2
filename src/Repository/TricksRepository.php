@@ -39,6 +39,11 @@ class TricksRepository extends ServiceEntityRepository
         }
     }
 
+    public function update(): void
+    {
+        $this->getEntityManager()->flush();
+    }
+
 //    /**
 //     * @return Tricks[] Returns an array of Tricks objects
 //     */
