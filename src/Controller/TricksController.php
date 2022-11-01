@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Entity\Tricks;
+use App\Entity\Video;
 use App\Form\TricksType;
 use App\Repository\TricksRepository;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,16 +25,40 @@ class TricksController extends AbstractController
     }
 
     #[Route('/new', name: 'app_tricks_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TricksRepository $tricksRepository): Response
+    public function new(Request $request, TricksRepository $tricksRepository, FileUploader $fileUploader): Response
     {
         $trick = new Tricks();
         $form = $this->createForm(TricksType::class, $trick);
-        dd($request);
+        $form->remove('updatedAt')
+            ->remove('createdAt')
+            ->remove('user');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $tricksRepository->persist($trick);
-            $tricksRepository->flush();
+            $trick->setUser($this->getUser());
+
+            $images = $form->get('images')->getData();
+
+            if ($images) {
+                foreach ($images as $image) {
+                    $filepath = $fileUploader->upload($image);
+                    $newimage = new Image();
+                    $newimage->setPath($filepath);
+                    $trick->addImage($newimage);
+                }
+            }
+
+            $videos = $form->get('videos')->getData();
+
+            if ($videos) {
+                foreach ($videos as $video) {
+
+                    $video->addTrick($trick);
+                }
+            }
+
+
+            $tricksRepository->save($trick, true);
 
             return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -54,10 +81,13 @@ class TricksController extends AbstractController
     public function edit(Request $request, Tricks $trick, TricksRepository $tricksRepository): Response
     {
         $form = $this->createForm(TricksType::class, $trick);
+        $form->remove('updatedAt')
+            ->remove('createdAt')
+            ->remove('user');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $tricksRepository->flush();
+            $tricksRepository->update();
 
             return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -71,9 +101,8 @@ class TricksController extends AbstractController
     #[Route('/{id}', name: 'app_tricks_delete', methods: ['POST'])]
     public function delete(Request $request, Tricks $trick, TricksRepository $tricksRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$trick->getId(), $request->request->get('_token'))) {
-            $tricksRepository->remove($trick);
-            $tricksRepository->flush();
+        if ($this->isCsrfTokenValid('delete' . $trick->getId(), $request->request->get('_token'))) {
+            $tricksRepository->remove($trick, true);
         }
 
         return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
