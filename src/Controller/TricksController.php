@@ -59,6 +59,7 @@ class TricksController extends AbstractController
 
 
             $tricksRepository->save($trick, true);
+            $this->addFlash('Success', 'La figure à bien été ajouter');
 
             return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -88,6 +89,7 @@ class TricksController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $tricksRepository->update();
+            $this->addFlash('Success', 'La figure à bien été mise à jour');
 
             return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -104,7 +106,7 @@ class TricksController extends AbstractController
         if ($this->isCsrfTokenValid('delete' . $trick->getId(), $request->request->get('_token'))) {
             $tricksRepository->remove($trick, true);
         }
-
+        $this->addFlash('Success', 'La figure à bien été supprimer');
         return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
     }
 }
