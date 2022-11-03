@@ -20,7 +20,8 @@ node_modules
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-/public/uploads
+/public/uploads/*
+!/public/uploads/placeholder.png
 
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
