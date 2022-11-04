@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Créer une figure
+{% endblock %}
+
+{% block body %}
+    <h1>Ajouter une nouvelle figure</h1>
+
+    {{ include('tricks/_form.html.twig') }}
+
+    <a href="{{ path('app_tricks_index') }}">Revenir à la liste</a>
+{% endblock %}

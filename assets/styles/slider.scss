@@ -1,0 +1,16 @@
+@import "node_modules/@glidejs/glide/src/assets/sass/glide.core";
+@import "node_modules/@glidejs/glide/src/assets/sass/glide.theme";
+
+iframe{
+    min-width: 390px;
+}
+
+.glide__slide{
+    max-height: 315px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img{
+        object-fit: cover;
+    }
+}

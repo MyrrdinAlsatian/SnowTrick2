@@ -20,4 +20,12 @@ node_modules
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-/public/uploads
+/public/uploads/*
+!/public/placeholder.png
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###

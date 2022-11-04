@@ -31,10 +31,10 @@ class Tricks
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'trick')]
+    #[ORM\ManyToMany(targetEntity: Image::class, mappedBy: 'trick', cascade:['persist'])]
     private Collection $images;
 
-    #[ORM\ManyToMany(targetEntity: Video::class, mappedBy: 'trick')]
+    #[ORM\ManyToMany(targetEntity: Video::class, mappedBy: 'trick', cascade:['persist'])]
     private Collection $videos;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
@@ -43,7 +43,7 @@ class Tricks
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
-    #[ORM\ManyToOne(inversedBy: 'trick')]
+    #[ORM\ManyToOne(inversedBy: 'trick', cascade:['persist'])]
     private ?User $user = null;
 
     public function __construct()
