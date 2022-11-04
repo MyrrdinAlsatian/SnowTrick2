@@ -6,6 +6,7 @@ use App\Entity\Image;
 use App\Entity\Tricks;
 use App\Entity\Video;
 use App\Form\TricksType;
+use App\Repository\ImageRepository;
 use App\Repository\TricksRepository;
 use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -131,5 +132,15 @@ class TricksController extends AbstractController
         }
         $this->addFlash('Success', 'La figure à bien été supprimer');
         return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/delete/image/{id}', name: 'app_image_delete')]
+    public function deleteImage(Request $request, Image $image, ImageRepository $entityManager): Response
+    {
+        unlink($this->getParameter('medias_directory') . '/' . $image->getPath());
+        $entityManager->remove($image, true);
+        $route = $request->headers->get('referer');
+        $this->addFlash('success', 'L\image à bien été supprimer');
+        return $this->redirect($route);
     }
 }
