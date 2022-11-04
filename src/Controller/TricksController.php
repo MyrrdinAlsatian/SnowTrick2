@@ -16,6 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -88,31 +89,17 @@ class TricksController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}', name: 'app_tricks_show', methods: ['GET','POST'])]
-    public function show(ManagerRegistry $doctrine, Tricks $trick, CommentRepository $commentsRepository, Request $request): Response
+    #[IsGranted('ROLE_USER')]
+    #[Route('/{id}', name: 'app_tricks_delete', methods: ['POST'])]
+    // #[ParamConverter('id', class: Tricks::class, options: ['mapping' => ['id' => 'id']])]
+    public function delete(Request $request, int $id ,Tricks $trick, TricksRepository $tricksRepository): Response
     {
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
-        // récupération de la figure
-        $repo = $doctrine->getRepository(Tricks::class);
-        $form->remove('createdAt')->remove('user')->remove('trick');
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setTrick($trick)->setCreatedAt(new \DateTimeImmutable())->setUser($this->getUser());
-            $commentsRepository->save($comment, true);
-
-            // return $this->redirectToRoute('app_comments_index', [], Response::HTTP_SEE_OTHER);
+        $trick = $tricksRepository->find($id);
+        if ($this->isCsrfTokenValid('delete' . $trick->getId(), $request->request->get('_token'))) {
+            $tricksRepository->remove($trick, true);
         }
-
-        return $this->renderForm('tricks/show.html.twig', [
-            'trick' => $trick,
-            'images' => $trick->getImages(),
-            'comments' => $trick->getComments(),
-            'videos' => $trick->getVideos(),
-            'image' => $trick->getFeatureImage(),
-            'form' => $form,
-            
-        ]);
+        $this->addFlash('Success', 'La figure à bien été supprimer');
+        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
     #[IsGranted('ROLE_USER')]
@@ -155,8 +142,10 @@ class TricksController extends AbstractController
             
             $tricksRepository->update();
             $this->addFlash('Success', 'La figure à bien été mise à jour');
+            $route = $request->headers->get('referer');
 
-            return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirect($route);
+
         }
 
         return $this->renderForm('tricks/edit.html.twig', [
@@ -166,16 +155,8 @@ class TricksController extends AbstractController
             'image'=> $trick->getFeatureImage()
         ]);
     }
-    #[IsGranted('ROLE_USER')]
-    #[Route('/{id}', name: 'app_tricks_delete', methods: ['POST'])]
-    public function delete(Request $request, Tricks $trick, TricksRepository $tricksRepository): Response
-    {
-        if ($this->isCsrfTokenValid('delete' . $trick->getId(), $request->request->get('_token'))) {
-            $tricksRepository->remove($trick, true);
-        }
-        $this->addFlash('Success', 'La figure à bien été supprimer');
-        return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
-    }
+
+    
 
     #[Route('/delete/image/{id}', name: 'app_image_delete')]
     public function deleteImage(Request $request, Image $image, ImageRepository $entityManager): Response
@@ -199,5 +180,53 @@ class TricksController extends AbstractController
         $route = $request->headers->get('referer');
         $this->addFlash('success', 'L\'image à bien été supprimer');
         return $this->redirect($route);
+    }
+
+    #[Route('/{slug}', name: 'app_tricks_show', methods: ['GET', 'POST'])]
+    public function show(ManagerRegistry $doctrine, Tricks $trick, CommentRepository $commentsRepository, Request $request): Response
+    {
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        // récupération de la figure
+        $repo = $doctrine->getRepository(Tricks::class);
+        $form->remove('createdAt')->remove('user')->remove('trick');
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setTrick($trick)->setCreatedAt(new \DateTimeImmutable())->setUser($this->getUser());
+            $commentsRepository->save($comment, true);
+
+            // return $this->redirectToRoute('app_comments_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('tricks/show.html.twig', [
+            'trick' => $trick,
+            'images' => $trick->getImages(),
+            'comments' => $trick->getComments(),
+            'videos' => $trick->getVideos(),
+            'image' => $trick->getFeatureImage(),
+            'form' => $form,
+
+        ]);
+    }
+
+    #[Route('/loadmore', name:"loadmoreImage", methods:["POST"])]
+    public function loadmoreImage(Request $request, TricksRepository $tricksRepository): JsonResponse
+    {
+        if($request->isXmlHttpRequest()){
+            $data=[];
+            $tricks = $tricksRepository->getLimitedTricksFromOffset($request->request->get('offset'), $tricksRepository->count([]));
+
+            foreach($tricks as $trick)
+            {
+                $data[] = [
+                    'id' => $trick->getId(),
+                    'feature' => $trick->getFeature(),
+                    'name' => $trick->getName(),
+                    'slug' => $trick->getSlug(),
+                ];
+            }
+            return new JsonResponse($data);
+        }
+
     }
 }

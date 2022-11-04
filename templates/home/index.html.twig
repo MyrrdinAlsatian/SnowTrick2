@@ -67,8 +67,9 @@ Pas de figure renseigné,
 
 					<div
 						class="card mb-3">
-						<img
-							src="{{ asset(figure.getImageId(),'uploaded') }}"
+<img
+	src="{{figure.getFeatureImage ? asset(figure.getFeatureImage, 'uploads') : asset('placeholder.png') }}"
+
 							alt="{{figure.name}}"
 							class="img-responsive"
 							alt="{{figure.name}}"/>
@@ -77,7 +78,7 @@ Pas de figure renseigné,
 							<h3
 								class="card-title">
 								<a
-									href="{{url('figure_single', { 'slug': figure.slug }) }}" class="card-link">
+									href="{{url('app_tricks_show', { 'slug': figure.slug }) }}" class="card-link">
 									{{ figure.name}}
 								</a>
 							</h3>
