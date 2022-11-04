@@ -2,13 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Image;
 use App\Entity\Tricks;
 use App\Entity\Video;
+use App\Form\CommentType;
 use App\Form\TricksType;
+use App\Repository\CommentRepository;
 use App\Repository\ImageRepository;
 use App\Repository\TricksRepository;
 use App\Service\FileUploader;
+use Doctrine\Persistence\ManagerRegistry;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/tricks')]
 class TricksController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/', name: 'app_tricks_index', methods: ['GET'])]
     public function index(TricksRepository $tricksRepository): Response
     {
@@ -25,7 +31,7 @@ class TricksController extends AbstractController
             'tricks' => $tricksRepository->findAll(),
         ]);
     }
-
+    #[IsGranted('ROLE_USER')]
     #[Route('/new', name: 'app_tricks_new', methods: ['GET', 'POST'])]
     public function new(Request $request, TricksRepository $tricksRepository, ImageRepository $imageRepository, FileUploader $fileUploader): Response
     {
@@ -82,18 +88,34 @@ class TricksController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_tricks_show', methods: ['GET'])]
-    public function show(Tricks $trick): Response
+    #[Route('/{slug}', name: 'app_tricks_show', methods: ['GET','POST'])]
+    public function show(ManagerRegistry $doctrine, Tricks $trick, CommentRepository $commentsRepository, Request $request): Response
     {
-        return $this->render('tricks/show.html.twig', [
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        // récupération de la figure
+        $repo = $doctrine->getRepository(Tricks::class);
+        $form->remove('createdAt')->remove('user')->remove('trick');
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setTrick($trick)->setCreatedAt(new \DateTimeImmutable())->setUser($this->getUser());
+            $commentsRepository->save($comment, true);
+
+            // return $this->redirectToRoute('app_comments_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('tricks/show.html.twig', [
             'trick' => $trick,
             'images' => $trick->getImages(),
             'comments' => $trick->getComments(),
             'videos' => $trick->getVideos(),
-            'image' => $trick->getFeatureImage()
+            'image' => $trick->getFeatureImage(),
+            'form' => $form,
+            
         ]);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/{id}/edit', name: 'app_tricks_edit', methods: ['GET', 'POST'])]
     #[ParamConverter('id', class: Tricks::class, options:['mapping' => ['id' => 'id']])]
     public function edit(Request $request, FileUploader $fileUploader, Tricks $trick, TricksRepository $tricksRepository): Response
@@ -144,7 +166,7 @@ class TricksController extends AbstractController
             'image'=> $trick->getFeatureImage()
         ]);
     }
-
+    #[IsGranted('ROLE_USER')]
     #[Route('/{id}', name: 'app_tricks_delete', methods: ['POST'])]
     public function delete(Request $request, Tricks $trick, TricksRepository $tricksRepository): Response
     {
@@ -165,6 +187,7 @@ class TricksController extends AbstractController
         return $this->redirect($route);
     }
 
+    #[IsGranted('ROLE_USER')]
     #[Route('/unset/image/{id}', name: 'app_ftimage_delete')]
     #[ParamConverter('id', class: Image::class, options:['mapping' => ['id' => 'id']])]
     public function unsetImage(Request $request, Image $image, ImageRepository $entityManager): Response
