@@ -23,6 +23,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('handleVideo', './assets/handleVideo.js')
     .addEntry('slider', './assets/handleSlider.js')
+    .addEntry('handleDelete', './assets/deletePicture.js')
     // .enableStimulusBridge('./assets/controllers.json')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
