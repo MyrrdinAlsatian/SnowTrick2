@@ -91,5 +91,9 @@
             "config": ".cz-config.js"
         }
     },
-    "dependencies": {}
+    "dependencies": {
+        "@glidejs/glide": "^3.6.0",
+        "sass": "^1.55.0",
+        "sass-loader": "^13.0.0"
+    }
 }

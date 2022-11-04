@@ -21,7 +21,7 @@ node_modules
 ###< symfony/phpunit-bridge ###
 
 /public/uploads/*
-!/public/uploads/placeholder.png
+!/public/placeholder.png
 
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
