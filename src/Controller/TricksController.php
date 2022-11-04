@@ -82,7 +82,7 @@ class TricksController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_tricks_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Tricks $trick, TricksRepository $tricksRepository): Response
+    public function edit(Request $request, Tricks $trick, TricksRepository $tricksRepository, FileUploader $fileUploader): Response
     {
         $form = $this->createForm(TricksType::class, $trick);
         $form->remove('updatedAt')
@@ -91,6 +91,25 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $images = $form->get('images')->getData();
+            if ($images) {
+                foreach ($images as $image) {
+                    $filepath = $fileUploader->upload($image);
+                    $newimage = new Image();
+                    $newimage->setPath($filepath);
+                    $trick->addImage($newimage);
+                }
+            }
+            
+            $videos = $form->get('videos')->getData();
+            
+            if ($videos) {
+                foreach ($videos as $video) {
+                    $video->addTrick($trick);
+                }
+            }
+            
             $tricksRepository->update();
             $this->addFlash('Success', 'La figure à bien été mise à jour');
 
@@ -99,6 +118,7 @@ class TricksController extends AbstractController
 
         return $this->renderForm('tricks/edit.html.twig', [
             'trick' => $trick,
+            'images' => $trick->getImages(),
             'form' => $form,
         ]);
     }

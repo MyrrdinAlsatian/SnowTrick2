@@ -7,6 +7,7 @@
 {% block javascripts %}
 	{{ encore_entry_script_tags('app') }}
 	{{ encore_entry_script_tags('handleVideo') }}
+	{{ encore_entry_script_tags('slider') }}
 {% endblock %}
 
 {% block body %}
@@ -54,35 +55,33 @@
 				alt="{{trick.name}}"/>
 		</div>
 
-		<!-- Start Carousel -->
-
 		<div
 			class="row d-none d-lg-flex load-media">
 			<div
 				class="col-lg-6 col-md-12">
-				{{form_widget(form.images)}}
-				{# {% if images is not empty %}
-														<div
-															class="glide">
-															<div
-																class="glide__track"
-																data-glide-el="track">
-																<ul
-																	class="glide__slides">
-																	{% for image in images %}
-																	<li
-																		class="glide__slide">
-																		0
-																	</li>
-																	{% endfor %}
-																</ul>
-															</div>
-															<div class="glide__arrows" data-glide-el="controls">
-																<button class="glide__arrow glide__arrow--left" data-glide-dir="<">prev</button>
-																<button class="glide__arrow glide__arrow--right" data-glide-dir=">">next</button>
-															</div>
-														</div> #}
-				{# {% else %} #}
+				{% if images is not empty %}
+						<div
+							class="glideImage">
+							<div
+								class="glide__track"
+								data-glide-el="track">
+								<ul
+									class="glide__slides">
+									{% for image in images %}
+									<li
+										class="glide__slide">
+									<img class="w-100"
+										src="{{asset(image.path, 'uploads')}}"/>
+									</li>
+									{% endfor %}
+								</ul>
+							</div>
+							<div class="glide__arrows" data-glide-el="controls">
+								<button class="glide__arrow glide__arrow--left" data-glide-dir="<">prev</button>
+								<button class="glide__arrow glide__arrow--right" data-glide-dir=">">next</button>
+							</div>
+						</div>
+				{% else %}
 					<div
 					class="row justify-content-center">
 					<div
@@ -94,9 +93,9 @@
 					</div>
 				</div>
 
-				{# {% endif %} #}
+				{% endif %}
+				{{form_widget(form.images)}}
 			</div>
-
 
 			<div
 				class="col-lg-6 col-md-12">
@@ -230,8 +229,6 @@
 					</tr>
 				</tbody>
 			</table>
-
-
 		</div>
 
 		<div
@@ -252,41 +249,24 @@
 			</p>
 
 		</div>
+				{{ form_end(form) }}
 		<div
 			class="card-footer">
-
-			{% if is_granted('ROLE_USER') %}
-				{{ form_start(form) }}
-				{{ form_widget(form) }}
+			<div class="row justify-content-center">
 				<button
 					class="btn btn-primary">
-					{{ button_label|default('Envoyer') }}
+					{{ button_label|default('Sauvegarder') }}
 				</button>
-				{{ form_end(form) }}
-			{% else %}
-				<p>
-					Veuillez vous
-					<a
-						href="{{path('app_login')}}">
-						connecter
-					</a>
-				</p>
-			{% endif %}
+				{{ include('tricks/_delete_form.html.twig') }}
+			</div>
 		</div>
 	</div>
 </div>
-{{form_end(form) }}
-{# 
-	{% block javascripts %}
-		{{ encore_entry_script_tags('app') }}
-		{{ encore_entry_script_tags('slider') }}
-	{% endblock %} #}
 
 	<a
 		href="{{ path('app_tricks_index') }}">
 		retour à la liste
 	</a>
-	{{ include('tricks/_delete_form.html.twig') }}
 	{% if is_granted('ROLE_USER') %}
 		{% else %}
 			<div
@@ -303,7 +283,6 @@
 						href="{{path('app_login')}}">
 						connecter
 					</a>
-
 					.
 				</p>
 			</div>
