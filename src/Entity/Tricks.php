@@ -46,6 +46,9 @@ class Tricks
     #[ORM\ManyToOne(inversedBy: 'trick', cascade:['persist'])]
     private ?User $user = null;
 
+    #[ORM\OneToOne(inversedBy: 'feature', cascade: ['persist'])]
+    private ?Image $FeatureImage = null;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -222,6 +225,18 @@ class Tricks
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getFeatureImage(): ?Image
+    {
+        return $this->FeatureImage;
+    }
+
+    public function setFeatureImage(?Image $FeatureImage): self
+    {
+        $this->FeatureImage = $FeatureImage;
 
         return $this;
     }
