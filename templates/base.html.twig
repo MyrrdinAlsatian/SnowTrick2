@@ -126,7 +126,7 @@
 		{% if image is defined %}
 			<div
 				class="vh-100 w-100"
-				style="{{ blur|default(false) ? 'filter: blur(5px);':''}}background-size:cover;background-image:url({{image ? asset(image,'uploaded')|default('  ') : ''}}
+				style="{{ blur|default(false) ? 'filter: blur(5px);':''}}background-size:cover;background-image:url({{image ? asset(image,'uploads')|default('  ') : ''}}
 														{# {{image|default('https://images.unsplash.com/photo-1504480899134-8d1752cc1162?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2169&q=80')}} #}
                                                         )"></div>
 		{% else %}

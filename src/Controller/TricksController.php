@@ -6,8 +6,10 @@ use App\Entity\Image;
 use App\Entity\Tricks;
 use App\Entity\Video;
 use App\Form\TricksType;
+use App\Repository\ImageRepository;
 use App\Repository\TricksRepository;
 use App\Service\FileUploader;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +27,7 @@ class TricksController extends AbstractController
     }
 
     #[Route('/new', name: 'app_tricks_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, TricksRepository $tricksRepository, FileUploader $fileUploader): Response
+    public function new(Request $request, TricksRepository $tricksRepository, ImageRepository $imageRepository, FileUploader $fileUploader): Response
     {
         $trick = new Tricks();
         $form = $this->createForm(TricksType::class, $trick);
@@ -36,6 +38,15 @@ class TricksController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $trick->setUser($this->getUser());
+
+            $ft_img = $form->get('feature_image')->getData();
+            if ($ft_img) {
+                $filepath = $fileUploader->upload($ft_img);
+                $newFt_image = new Image();
+                $newFt_image->setPath($filepath);
+                $newFt_image->setFeature($trick);
+                $imageRepository->save($newFt_image);
+            }
 
             $images = $form->get('images')->getData();
 
@@ -67,6 +78,7 @@ class TricksController extends AbstractController
         return $this->renderForm('tricks/new.html.twig', [
             'trick' => $trick,
             'form' => $form,
+            'image' => $trick->getFeatureImage()
         ]);
     }
 
@@ -78,11 +90,13 @@ class TricksController extends AbstractController
             'images' => $trick->getImages(),
             'comments' => $trick->getComments(),
             'videos' => $trick->getVideos(),
+            'image' => $trick->getFeatureImage()
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_tricks_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Tricks $trick, TricksRepository $tricksRepository, FileUploader $fileUploader): Response
+    #[ParamConverter('id', class: Tricks::class, options:['mapping' => ['id' => 'id']])]
+    public function edit(Request $request, FileUploader $fileUploader, Tricks $trick, TricksRepository $tricksRepository): Response
     {
         $form = $this->createForm(TricksType::class, $trick);
         $form->remove('updatedAt')
@@ -91,7 +105,14 @@ class TricksController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
+            $ft_img= $form->get('feature_image')->getData();
+            if($ft_img){
+                $filepath = $fileUploader->upload($ft_img);
+                $newFt_image = new Image();
+                $newFt_image->setPath($filepath);
+                $newFt_image->setFeature($trick);
+            }
+
             $images = $form->get('images')->getData();
             if ($images) {
                 foreach ($images as $image) {
@@ -120,6 +141,7 @@ class TricksController extends AbstractController
             'trick' => $trick,
             'images' => $trick->getImages(),
             'form' => $form,
+            'image'=> $trick->getFeatureImage()
         ]);
     }
 
@@ -131,5 +153,28 @@ class TricksController extends AbstractController
         }
         $this->addFlash('Success', 'La figure à bien été supprimer');
         return $this->redirectToRoute('app_tricks_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/delete/image/{id}', name: 'app_image_delete')]
+    public function deleteImage(Request $request, Image $image, ImageRepository $entityManager): Response
+    {
+        unlink($this->getParameter('medias_directory') . '/' . $image->getPath());
+        $entityManager->remove($image, true);
+        $route = $request->headers->get('referer');
+        $this->addFlash('success', 'L\image à bien été supprimer');
+        return $this->redirect($route);
+    }
+
+    #[Route('/unset/image/{id}', name: 'app_ftimage_delete')]
+    #[ParamConverter('id', class: Image::class, options:['mapping' => ['id' => 'id']])]
+    public function unsetImage(Request $request, Image $image, ImageRepository $entityManager): Response
+    {
+        // unlink($this->getParameter('medias_directory') . '/' . $image->getPath());
+        // $trick = $image->getFeature();
+        $image->setFeature(null);
+        $entityManager->save($image, true);
+        $route = $request->headers->get('referer');
+        $this->addFlash('success', 'L\'image à bien été supprimer');
+        return $this->redirect($route);
     }
 }

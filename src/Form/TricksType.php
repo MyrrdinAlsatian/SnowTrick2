@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Tricks;
 use App\Entity\Video;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,33 +24,47 @@ class TricksType extends AbstractType
             ->add('description', TextareaType::class)
             ->add('createdAt')
             ->add('updatedAt')
-            ->add('images', FileType::class,[
-                'required' =>false,
+            ->add('feature_image', FileType::class, [
+                'required' => false,
                 'mapped' => false,
-                'multiple' => true,
-                'constraints' =>[
-                    new All([
+                'label'=>'Image mise en avant',
+                'constraints' => [
                     new File([
                         'maxSize' => '5Mi',
                         'mimeTypes' => [
                             'image/jpeg',
                             'image/png',
+                        ],
+                    ])
+                ]
+            ])
+            ->add('images', FileType::class, [
+                'label' => 'Ajouter des images',
+                'required' => false,
+                'mapped' => false,
+                'multiple' => true,
+                'constraints' => [
+                    new All([
+                        new File([
+                            'maxSize' => '5Mi',
+                            'mimeTypes' => [
+                                'image/jpeg',
+                                'image/png',
                             ],
                         ])
                     ])
                 ]
             ])
-            ->add('videos', CollectionType::class,[
+            ->add('videos', CollectionType::class, [
                 'label' => false,
-                'entry_type'=> VideoFormType::class,
+                'entry_type' => VideoFormType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'prototype'=>true,
+                'prototype' => true,
                 'prototype_data' => new Video()
             ])
             ->add('category')
-            ->add('user')
-        ;
+            ->add('user');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

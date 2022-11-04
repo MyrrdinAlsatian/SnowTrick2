@@ -21,6 +21,9 @@ class Image
     #[ORM\ManyToMany(targetEntity: Tricks::class, inversedBy: 'images')]
     private Collection $trick;
 
+    #[ORM\OneToOne(mappedBy: 'FeatureImage', cascade: ['persist'])]
+    private ?Tricks $feature = null;
+
     public function __construct()
     {
         $this->trick = new ArrayCollection();
@@ -70,5 +73,27 @@ class Image
     public function __toString()
     {
         return $this->path;
+    }
+
+    public function getFeature(): ?Tricks
+    {
+        return $this->feature;
+    }
+
+    public function setFeature(?Tricks $feature): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($feature === null && $this->feature !== null) {
+            $this->feature->setFeatureImage(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($feature !== null && $feature->getFeatureImage() !== $this) {
+            $feature->setFeatureImage($this);
+        }
+
+        $this->feature = $feature;
+
+        return $this;
     }
 }
