@@ -24,6 +24,7 @@ class TricksType extends AbstractType
             ->add('createdAt')
             ->add('updatedAt')
             ->add('images', FileType::class,[
+                'required' =>false,
                 'mapped' => false,
                 'multiple' => true,
                 'constraints' =>[
