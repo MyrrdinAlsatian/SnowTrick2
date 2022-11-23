@@ -26,6 +26,7 @@
 		background: #F5F5F5;
 		padding: 2px 6px;
 	}
+		
 </style>
 {% if is_granted('ROLE_USER') %}
 
@@ -53,8 +54,21 @@
 			</h3>
 
 			<img
-				src={{asset('placeholder.png') }} alt="{{trick.name}}" class="w-100"
+				src={{ image ? asset(image, 'uploads') : asset('placeholder.png') }} alt="{{trick.name}}" class="w-100"
 				alt="{{trick.name}}"/>
+				<div class="search-bar position-absolute top-0 end-0">
+					{{ form_widget(form.feature_image)}}
+					<button
+						class="btn btn-secondary">
+						{{ button_label|default('Modifier') }}
+					</button>
+					{% if image %}
+					 <a  class="btn btn-danger "href={{ path('app_ftimage_delete', {'id':trick.id}) }}
+> 🗑</a>
+
+						
+					{% endif %}
+				</div>
 		</div>
 
 		<div
@@ -265,11 +279,13 @@
 	</div>
 </div>
 {{ include('tricks/_delete_form.html.twig') }}
-
+	{% if is_granted('ROLE_ADMIN') %}
+	
 	<a
 		href="{{ path('app_tricks_index') }}">
 		retour à la liste
 	</a>
+	{% endif %}
 		{% else %}
 			<div
 				class="alert alert-warning">

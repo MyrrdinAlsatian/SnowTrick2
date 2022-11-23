@@ -169,13 +169,13 @@ class TricksController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/unset/image/{id}', name: 'app_ftimage_delete')]
-    #[ParamConverter('id', class: Image::class, options:['mapping' => ['id' => 'id']])]
-    public function unsetImage(Request $request, Image $image, ImageRepository $entityManager): Response
+    // #[ParamConverter('id', class: Image::class, options:['mapping' => ['id' => 'id']])]
+    public function unsetImage(Request $request, Tricks $trick, TricksRepository $entityManager): Response
     {
         // unlink($this->getParameter('medias_directory') . '/' . $image->getPath());
         // $trick = $image->getFeature();
-        $image->setFeature(null);
-        $entityManager->save($image, true);
+        $trick->setFeatureImage(null);
+        $entityManager->update($trick);
         $route = $request->headers->get('referer');
         $this->addFlash('success', 'L\'image à bien été supprimer');
         return $this->redirect($route);

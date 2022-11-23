@@ -278,12 +278,12 @@
 
 	</div>
 
-	{{if is_granted('ROLE_USER')}}
+	{%if is_granted('ROLE_USER')%}
 
     <a href="{{ path('app_tricks_edit', {'id': trick.id}) }}">edit</a>
 
     {{ include('tricks/_delete_form.html.twig') }}
-	{{endif}}
+	{%endif%}
 	{% block javascripts %}
 		{{ encore_entry_script_tags('app') }}
 		{{ encore_entry_script_tags('slider') }}

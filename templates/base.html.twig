@@ -88,7 +88,7 @@
 								class="nav-item">
 								<a
 									class="nav-link"
-									{# href="{{path("app_logout")}}" #}
+									 href="{{path("app_logout")}}"
                                     >
 									LogOut
 								</a>
@@ -99,7 +99,7 @@
 								class="nav-item">
 								<a
 									class="nav-link"
-									{# href="{{path("app_register")}}" #}
+									 href="{{path("app_register")}}"
                                     >
 									Sign in
 								</a>
@@ -109,7 +109,7 @@
 								class="nav-item">
 								<a
 									class="nav-link"
-									{# href="{{path("app_login")}}" #}
+									 href="{{path("app_login")}}"
                                     >
 									Sing Up
 								</a>
@@ -126,9 +126,7 @@
 		{% if image is defined %}
 			<div
 				class="vh-100 w-100"
-				style="{{ blur|default(false) ? 'filter: blur(5px);':''}}background-size:cover;background-image:url({{image ? asset(image,'uploads')|default('  ') : ''}}
-														{# {{image|default('https://images.unsplash.com/photo-1504480899134-8d1752cc1162?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2169&q=80')}} #}
-                                                        )"></div>
+style="background-size:cover;background-image:url('https://images.unsplash.com/photo-1529669851596-ba9a5549af95?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2064&q=80')"></div>
 		{% else %}
 			<div
 				class="vh-100 w-100"></div>

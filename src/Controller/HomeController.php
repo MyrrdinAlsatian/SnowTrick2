@@ -45,6 +45,7 @@ class HomeController extends AbstractController
             'page' => $page,
             'pages' => $pages,
             'limit' => $limit,
+            'image' => true
 
         ]);
     }
