@@ -91,7 +91,6 @@ class TricksController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/{id}', name: 'app_tricks_delete', methods: ['POST'])]
-    // #[ParamConverter('id', class: Tricks::class, options: ['mapping' => ['id' => 'id']])]
     public function delete(Request $request, int $id ,Tricks $trick, TricksRepository $tricksRepository): Response
     {
         $trick = $tricksRepository->find($id);
@@ -185,23 +184,39 @@ class TricksController extends AbstractController
     #[Route('/{slug}', name: 'app_tricks_show', methods: ['GET', 'POST'])]
     public function show(ManagerRegistry $doctrine, Tricks $trick, CommentRepository $commentsRepository, Request $request): Response
     {
+
+        if (!is_numeric($request->query->get("page", 1)) or (int)$request->query->get("page", 1) <= 0) {
+            $page = 1;
+        } else {
+            $page = (int)$request->query->get("page", 1);
+        }
+
+
+        $limit = 10; //we want 10 records per page
+
+        $start = $limit * $page - $limit; //offset calculation (the start)
+
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         // récupération de la figure
         $repo = $doctrine->getRepository(Tricks::class);
+        $total = count($commentsRepository->findBy(['trick'=>$trick->getId()])); //
+        $pages = ceil($total / $limit);
         $form->remove('createdAt')->remove('user')->remove('trick');
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setTrick($trick)->setCreatedAt(new \DateTimeImmutable())->setUser($this->getUser());
             $commentsRepository->save($comment, true);
-
+            
             // return $this->redirectToRoute('app_comments_index', [], Response::HTTP_SEE_OTHER);
         }
-
+        
         return $this->renderForm('tricks/show.html.twig', [
             'trick' => $trick,
             'images' => $trick->getImages(),
             'comments' => $trick->getComments(),
+            'page' => $page,
+            'pages' => $pages,
             'videos' => $trick->getVideos(),
             'image' => $trick->getFeatureImage(),
             'form' => $form,
@@ -209,24 +224,46 @@ class TricksController extends AbstractController
         ]);
     }
 
-    #[Route('/loadmore', name:"loadmoreImage", methods:["POST"])]
-    public function loadmoreImage(Request $request, TricksRepository $tricksRepository): JsonResponse
+    #[Route("/{page<\d+>}/{limit}-per-page", name:"trick_page_with_limit", methods:["GET"])]
+
+    public function loadmoreImage(TricksRepository $trickRepository, $page = 1, int $limit = 8): Response
     {
-        if($request->isXmlHttpRequest()){
-            $data=[];
-            $tricks = $tricksRepository->getLimitedTricksFromOffset($request->request->get('offset'), $tricksRepository->count([]));
+        $start = $limit * $page - $limit; //offset calculation (the start)
+        $total = count($trickRepository->findAll()); //Calculate the number of records
 
-            foreach($tricks as $trick)
-            {
-                $data[] = [
-                    'id' => $trick->getId(),
-                    'feature' => $trick->getFeature(),
-                    'name' => $trick->getName(),
-                    'slug' => $trick->getSlug(),
-                ];
-            }
-            return new JsonResponse($data);
-        }
+        $pages = ceil($total / $limit); // total page count rounded to the next whole number
+        $tricks = $trickRepository->findBy([], ['createdAt' => 'DESC'], $limit, $start);
 
+        return $this->render('home/_listingTricks.html.twig', [
+            'titre' => 'SnowTricks',
+            'slogan' => 'Grab ta place dans la communauté',
+            'tricks' => $tricks,
+            'page' => $page,
+            'pages' => $pages,
+            'limit' => $limit,
+        ]);
+    }
+
+    #[Route("/{page<\d+>}/{limit}-per-page", name: "comment_page_with_limit", methods: ["GET"])]
+
+    public function loadmoreComment(Tricks $trick,CommentRepository $commentRepository, $page = 1, int $limit = 10): Response
+    {
+        $start = $limit * $page - $limit; //offset calculation (the start)
+        $total = count($commentRepository->findAll()); //Calculate the number of records
+
+        $pages = ceil($total / $limit); // total page count rounded to the next whole number
+        $tricks = $commentRepository->findBy([], ['createdAt' => 'DESC'], $limit, $start);
+
+        
+        return $this->render('home/_listingTricks.html.twig', [
+            'trick' => $trick,
+            'images' => $trick->getImages(),
+            'comments' => $trick->getComments(),
+            'page' => $page,
+            'pages' => $pages,
+            'videos' => $trick->getVideos(),
+            'image' => $trick->getFeatureImage(),
+            'form' => $form,
+        ]);
     }
 }
