@@ -27,6 +27,8 @@
 		padding: 2px 6px;
 	}
 </style>
+{% if is_granted('ROLE_USER') %}
+
 {{ form_start(form) }}
 <div
 	class="example-wrapper">
@@ -51,7 +53,7 @@
 			</h3>
 
 			<img
-				src={{ asset('placeholder.png') }} alt="{{trick.name}}" class="w-100"
+				src={{asset('placeholder.png') }} alt="{{trick.name}}" class="w-100"
 				alt="{{trick.name}}"/>
 		</div>
 
@@ -257,17 +259,17 @@
 					class="btn btn-primary">
 					{{ button_label|default('Sauvegarder') }}
 				</button>
-				{{ include('tricks/_delete_form.html.twig') }}
-			</div>
+</div>
+
 		</div>
 	</div>
 </div>
+{{ include('tricks/_delete_form.html.twig') }}
 
 	<a
 		href="{{ path('app_tricks_index') }}">
 		retour à la liste
 	</a>
-	{% if is_granted('ROLE_USER') %}
 		{% else %}
 			<div
 				class="alert alert-warning">

@@ -1,107 +1,34 @@
 # SnowTrick
-# BasicStarter
 
-Un simple repo contenant le strict minimum pour n'importe quel projet de code
+## INSTALLATION
+### __Download or clone__
+Download zip files or clone the project repository with github ([see GitHub documentation](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository)).
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor V as Visiteur
-    participant Site as SnowTricks
-    participant BDD as Base de données
+### __Install the project__
+1.  If needed, install __Composer__ by following [the official instructions](https://getcomposer.org/download/).
+2.  In your cmd, go to the directory where you want to install the project and install dependencies with composer:
+```
+$ cd some\directory
+$ composer install
+```
+Dependencies should be installed in your project (check _vendor_ directory).
 
-    V->>+Site: 1: Demande une page de figure
-    Site->>+BDD: 2: Envoie la requête pour récupérer les données
-    BDD-->>-Site: 3: Retourne les données
-    Site-->>-V: 4 :Affiche la page de la figure demandé
-
+### __Create the database__
+1. If the database does not exist, create it with the following command in the project directory:
+```
+$ php bin/console doctrine:database:create
+```
+2. Create database structure thanks to migrations:
+```
+$ php bin/console doctrine:migrations:migrate
 ```
 
-[![](https://mermaid.ink/img/pako:eNplkT1uwzAMha9CaG089GfSEKCBO2apC09eCJlOhMSSS0ktiiAHcq_hi5WKEMBABQ36-d57lHhRxvektAr0mcgZqi0eGMfOgQw00TO0gAFaG2ykxOViQo7W2AldhEbOM9E4__3B1pzCf2ZX1xnZYSDoZXrnlpkELGhbbbcP2UfDo4aaRnRCJUdicrgpBntITIXOYBaIqYYnDW_uy1uCMwLLI5ZfKWfyiYGX2aRpmZkYzhRWqdlF1JW4VCX2WcM7RVFJ5pqFVWSmWw0voF-HwZrjLfJeoCxLjbLJ5S9zUd6H2qiReETby2df8l2n4pFG6pSWZY986lTnrsJhir75cUbpyIk2Kk09xntjlB7wHOSUeivN2Zfu3Zp4_QPimZqh)](https://mermaid.live/edit#pako:eNplkT1uwzAMha9CaG089GfSEKCBO2apC09eCJlOhMSSS0ktiiAHcq_hi5WKEMBABQ36-d57lHhRxvektAr0mcgZqi0eGMfOgQw00TO0gAFaG2ykxOViQo7W2AldhEbOM9E4__3B1pzCf2ZX1xnZYSDoZXrnlpkELGhbbbcP2UfDo4aaRnRCJUdicrgpBntITIXOYBaIqYYnDW_uy1uCMwLLI5ZfKWfyiYGX2aRpmZkYzhRWqdlF1JW4VCX2WcM7RVFJ5pqFVWSmWw0voF-HwZrjLfJeoCxLjbLJ5S9zUd6H2qiReETby2df8l2n4pFG6pSWZY986lTnrsJhir75cUbpyIk2Kk09xntjlB7wHOSUeivN2Zfu3Zp4_QPimZqh)
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor V as Membre
-    participant Site as SnowTricks
-    participant BDD as Base de données
-
-    V->>+Site: 1: Soumet un formulaire de création de figure
-    Site->>Site: 2: Vérifications des données
-    Site->>Site: 3: Gestion des médias
-    Site->>+BDD: 4: Entre les données dans la base de données
-    BDD-->>-Site: 5: Retourne le status de l'enregistrement
-    alt La figure a été ajouté
-    Site-->>+V: 6 :Affiche la page de la figure créer
-    else La figure n'a pas été ajouté
-    Site-->>+V: 7: Redirige vers la page de création de figure
-    end
+3. Install fixtures to have first contents and your admin account (update the fixtures files before if needed):
 ```
-
-[![](https://mermaid.ink/img/pako:eNqFks9OwzAMxl_FymUHtgP_pRwmgYa4wIWhnXrxWncLNMlwEhCa9kB9jr4YzrrBxISoKqVpPv_82fFalb4ipVWgt0SupInBBaMtHMiDKXqX7Jx4ty-jZ5gBBngkO2fqf6-QoynNCl2EqYmUz6fOfzyzKV_DseZ2MsmSWwwElbzeua4lEfbS2Wg8PskcDacapj5ZipAc1J5tatDwNqrkrsVovMub2izS3k2OFEIPONMw61o2tSm34iDqcJDxKOBcwz2FHTeAsbj4pTsR-xouNNy5KFaaAx5UKBkahPlRaRkggSMBjPpMlxqeKPrELkMgRIwp24NmQI5pYYLgLUm_ds1vIjzgrlRA6NrYtYAvPsl64DBbnGm4An1TS9lLyoZWUsaW_Q3I_dvfKzVi94ftBjkg_JPgOvuvDBshvxOHwzR_Xg65Ki-ghsoSWzSVzN46nxUqLqXcQmn5rJBfC1W4jejyEE4_Xal05ERDlVYVxv2cKl2jmB8qcSKz-dgP83amN1-WWfpY)](https://mermaid.live/edit#pako:eNqFks9OwzAMxl_FymUHtgP_pRwmgYa4wIWhnXrxWncLNMlwEhCa9kB9jr4YzrrBxISoKqVpPv_82fFalb4ipVWgt0SupInBBaMtHMiDKXqX7Jx4ty-jZ5gBBngkO2fqf6-QoynNCl2EqYmUz6fOfzyzKV_DseZ2MsmSWwwElbzeua4lEfbS2Wg8PskcDacapj5ZipAc1J5tatDwNqrkrsVovMub2izS3k2OFEIPONMw61o2tSm34iDqcJDxKOBcwz2FHTeAsbj4pTsR-xouNNy5KFaaAx5UKBkahPlRaRkggSMBjPpMlxqeKPrELkMgRIwp24NmQI5pYYLgLUm_ds1vIjzgrlRA6NrYtYAvPsl64DBbnGm4An1TS9lLyoZWUsaW_Q3I_dvfKzVi94ftBjkg_JPgOvuvDBshvxOHwzR_Xg65Ki-ghsoSWzSVzN46nxUqLqXcQmn5rJBfC1W4jejyEE4_Xal05ERDlVYVxv2cKl2jmB8qcSKz-dgP83amN1-WWfpY)
-
-```mermaid
-classDiagram
-    Users "1" --> "*" Tricks
-    Users "1..*" --> "1" Comment
-    Comment "1" --> "1" Tricks
-    Tricks "0..*" --> "1..*" Image
-    Tricks "0..*" --> "1..*" Video
-    Tricks "1" --> "1..*" Categories
-
-    class Tricks{
-      int id
-      int user
-      int mediaPackage
-      int category
-      int image
-      int comments
-      string name
-      string description
-      string name
-      string slug
-      dateFormat createdAt
-      dateFormat updatedAt
-
-      __construct()
-
-    }
-
-    class Image{
-      int id
-      string path
-    }
-
-    class Video{
-      int id
-      string path
-    }
-    class Categories{
-        int id
-        string label
-        __construct()
-    }
-    class Comment{
-        int id
-        int user
-        int tricks
-        string content
-        dateFormat createdAt
-        bool is_Valid
-        __construct()
-    }
-    class Users{
-        int id
-        string username
-        string email
-        string password
-        string role
-        string linkValid
-        dateFormat createdAt
-        bool is_Valid
-        __construc()
-    }
-
+$ php bin/console doctrine:fixtures:load
 ```
+Your database should be updated with contents.  
 
-[![](https://mermaid.ink/img/pako:eNqlVF1rwyAU_Svi01a60r7mYTA6BnsoDLb1KVCsulTqR1CzUUr_-25ikpqPLbAVSvR4PPfcq9czpoZxnGAqiXOPgmSWqFQj-L07bh1K8SrF6O7uHkYzGL1ZQY-ux1gsZi2ppK-NUlz7wKonHaVVTymMB5RnRTLeYywXiy5pw5kgOaHHITciBotr4nlmrOB13CpAENUtdxm4Q92tYNwEsQl24Fc1rd2cA4SQgFIIFs8KKGM8V6XUSxw44DSYP3WUVJ8Uqu0azHkrdIY0UbwHMe6oFbkXRk-TnSyyBmLg48lYRSCa5TBhD35krchZd6357nbUaNAtqL-57S5e4sJVh_ND3WpbOfGHkZ3VQf1p5_WCtNv7Aq2EJHsur-hIWl3pcDK_6PYvQ0B81CdRdAjm2x6bOhaE9sZIJNxuS2Qccsp01eLTpShdx7emXeCKCDlAc5D-MnaoY40cakihjz3b_8w1SvW6XGccNzKKMh_LvsE-y_s2Qo2bswwHfzzHioNxweDRreRT7A8cSocTGDJijylO9QV4pPDm9aQpTsAzn-PQUPUbjZMPIh2gYNcbu6lf8fJz-Qan_7n5)](https://mermaid.live/edit#pako:eNqlVF1rwyAU_Svi01a60r7mYTA6BnsoDLb1KVCsulTqR1CzUUr_-25ikpqPLbAVSvR4PPfcq9czpoZxnGAqiXOPgmSWqFQj-L07bh1K8SrF6O7uHkYzGL1ZQY-ux1gsZi2ppK-NUlz7wKonHaVVTymMB5RnRTLeYywXiy5pw5kgOaHHITciBotr4nlmrOB13CpAENUtdxm4Q92tYNwEsQl24Fc1rd2cA4SQgFIIFs8KKGM8V6XUSxw44DSYP3WUVJ8Uqu0azHkrdIY0UbwHMe6oFbkXRk-TnSyyBmLg48lYRSCa5TBhD35krchZd6357nbUaNAtqL-57S5e4sJVh_ND3WpbOfGHkZ3VQf1p5_WCtNv7Aq2EJHsur-hIWl3pcDK_6PYvQ0B81CdRdAjm2x6bOhaE9sZIJNxuS2Qccsp01eLTpShdx7emXeCKCDlAc5D-MnaoY40cakihjz3b_8w1SvW6XGccNzKKMh_LvsE-y_s2Qo2bswwHfzzHioNxweDRreRT7A8cSocTGDJijylO9QV4pPDm9aQpTsAzn-PQUPUbjZMPIh2gYNcbu6lf8fJz-Qan_7n5)
+#### __You are ready to use your app!__  
+Loggued in as a registered user (with verified email address), you can manage your tricks and your own messages.  
+As an simple visitor, you can just see the content.  

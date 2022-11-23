@@ -44,6 +44,16 @@ class TricksRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
+    public function getLimitedTricksFromOffset($offset, $end)
+    {
+        return $this->createQueryBuilder('t')
+                    ->orderBy('t.updatedAt', 'DESC')
+                    ->setFirstResult($offset)
+                    ->setMaxResults($end)
+                    ->getQuery()
+                    ->getResult();
+    }
+
 //    /**
 //     * @return Tricks[] Returns an array of Tricks objects
 //     */
